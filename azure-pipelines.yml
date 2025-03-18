@@ -4,6 +4,13 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
+variables:
+  # Add your environment variables here
+  NUXT_SESSION_PASSWORD: '$(NUXT_SESSION_PASSWORD)'
+  STRAPI_URL: '$(STRAPI_URL)'
+  STRAPI_API_TOKEN: '$(STRAPI_API_TOKEN)'
+  # Add any other environment variables your app needs
+
 steps:
 - task: NodeTool@0
   inputs:
@@ -12,8 +19,14 @@ steps:
 
 - script: |
     npm install -g pnpm
-    cd ../.. && pnpm install --frozen-lockfile && pnpm run build
-  displayName: 'Build application (matching Vercel config)'
+    pnpm install --frozen-lockfile
+    pnpm run build
+  displayName: 'Build application'
+  env:
+    NUXT_SESSION_PASSWORD: $(NUXT_SESSION_PASSWORD)
+    STRAPI_URL: $(STRAPI_URL)
+    STRAPI_API_TOKEN: $(STRAPI_API_TOKEN)
+    # Add any other environment variables here too
 
 - task: CopyFiles@2
   inputs:
