@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { type HTMLAttributes, computed } from "vue";
+  import { type HTMLAttributes, computed, ref } from "vue";
   import {
     SelectContent,
     type SelectContentEmits,
@@ -14,6 +14,12 @@
   defineOptions({
     inheritAttrs: false,
   });
+
+  // Only render portal on client side
+  const isClient = ref(false)
+  onMounted(() => {
+    isClient.value = true
+  })
 
   const props = withDefaults(
     defineProps<SelectContentProps & { class?: HTMLAttributes["class"] }>(),
@@ -33,7 +39,7 @@
 </script>
 
 <template>
-  <SelectPortal>
+  <SelectPortal v-if="isClient">
     <SelectContent
       v-bind="{ ...forwarded, ...$attrs }"
       :class="
@@ -60,4 +66,5 @@
       <SelectScrollDownButton />
     </SelectContent>
   </SelectPortal>
+  <!-- Fallback for SSR - nothing rendered during server-side rendering -->
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type HTMLAttributes, computed } from 'vue'
+import { type HTMLAttributes, computed, ref } from 'vue'
 import {
   DialogClose,
   DialogContent,
@@ -11,6 +11,12 @@ import {
 } from 'radix-vue'
 import { X } from 'lucide-vue-next'
 import { cn } from '@/modules/ui/lib/utils'
+
+// Only render portal on client side
+const isClient = ref(false)
+onMounted(() => {
+  isClient.value = true
+})
 
 const props = defineProps<DialogContentProps & { class?: HTMLAttributes['class'] }>()
 const emits = defineEmits<DialogContentEmits>()
@@ -25,7 +31,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
 </script>
 
 <template>
-  <DialogPortal>
+  <DialogPortal v-if="isClient">
     <DialogOverlay
       class="fixed inset-0 z-50 bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
     />
@@ -47,4 +53,5 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
       </DialogClose>
     </DialogContent>
   </DialogPortal>
+  <!-- Fallback for SSR - nothing rendered -->
 </template>

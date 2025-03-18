@@ -12,6 +12,12 @@
   const { toast, dismiss: dismissToast } = useToast();
   const { apiCaller } = useApiCaller();
 
+  // Only execute in client-side environment
+  const isClient = ref(false);
+  onMounted(() => {
+    isClient.value = true;
+  });
+
   const unimpersonateMutation = apiCaller.admin.unimpersonate.useMutation();
 
   const unimpersonate = async () => {
@@ -46,7 +52,7 @@
       <DropdownMenuSeparator />
 
       <!-- Color mode selection -->
-      <DropdownMenuSub>
+      <DropdownMenuSub v-if="isClient">
         <DropdownMenuSubTrigger>
           <ColorModeToggleIcon />
           <div class="ml-2">
@@ -63,7 +69,7 @@
       <DropdownMenuSeparator />
 
       <!-- Locale selection -->
-      <DropdownMenuSub>
+      <DropdownMenuSub v-if="isClient">
         <DropdownMenuSubTrigger>
           <LanguagesIcon class="size-4" />
 
