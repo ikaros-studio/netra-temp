@@ -5,6 +5,7 @@
   "github": {
     "silent": true
   },
+  "framework": "nuxt",
   "routes": [
     {
       "src": "/assets/(.*)",
@@ -17,8 +18,15 @@
       "continue": true
     },
     {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(api|_nuxt)/.*",
+      "continue": true
+    },
+    {
       "src": "/(.*)",
-      "dest": "/"
+      "dest": "200.html"
     }
   ]
 } 
