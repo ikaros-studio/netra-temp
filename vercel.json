@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "buildCommand": "cd ../.. && pnpm install --frozen-lockfile && pnpm run build",
+  "outputDirectory": "apps/web/.output/public",
+  "github": {
+    "silent": true
+  },
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/200.html" }
+  ]
+} 

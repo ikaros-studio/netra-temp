@@ -1,0 +1,29 @@
+trigger:
+  - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '18.x'
+  displayName: 'Install Node.js'
+
+- script: |
+    npm install -g pnpm
+    cd ../.. && pnpm install --frozen-lockfile && pnpm run build
+  displayName: 'Build application (matching Vercel config)'
+
+- task: CopyFiles@2
+  inputs:
+    sourceFolder: 'apps/web/.output/public'
+    contents: '**'
+    targetFolder: '$(Build.ArtifactStagingDirectory)'
+  displayName: 'Copy build output'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathToPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: 'drop'
+  displayName: 'Publish artifacts'
