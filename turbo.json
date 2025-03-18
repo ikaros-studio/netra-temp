@@ -4,6 +4,7 @@
   "globalEnv": [
     "NODE_ENV",
     "PORT",
+    "DATABASE_URL",
     "NUXT_PUBLIC_SITE_URL",
     "VERCEL_URL",
     "LEMONSQUEEZY_WEBHOOK_SECRET",
@@ -41,7 +42,7 @@
   "tasks": {
     "build": {
       "dependsOn": ["^db:generate", "^build"],
-      "outputs": ["dist/**", ".output/**"]
+      "outputs": ["dist/**", ".output/**", ".nuxt/**", ".vercel/**"]
     },
     "check-types": {},
     "clean": {
