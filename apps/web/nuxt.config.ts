@@ -21,6 +21,7 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    PERPLEXITY_API_KEY: process.env.PERPLEXITY_API_KEY,
     public: {
       siteUrl: baseUrl,
       s3AvatarsBucketName: process.env.NUXT_PUBLIC_S3_AVATARS_BUCKET_NAME,

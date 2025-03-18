@@ -1,60 +1,85 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 
 definePageMeta({
   layout: "saas-app",
 });
 
-// Mock data for customers
-const customers = ref([
-  {
-    id: 1,
-    name: "Otto Company",
-    type: "Company",
-    caseStatus: "Not Started",
-    registration: "Germany",
-    riskLevel: "Not Applicable",
-    lastUpdate: "14 Feb , 2025",
-    dueDate: "30 Sep , 2025"
-  },
-  {
-    id: 2,
-    name: "John Doe",
-    type: "Individual",
-    caseStatus: "Verified",
-    registration: "Germany",
-    riskLevel: "Medium",
-    riskScore: 52,
-    lastUpdate: "10 Feb , 2025",
-    dueDate: "15 Aug , 2025"
-  },
-  {
-    id: 3,
-    name: "ABC Corp Ltd.",
-    type: "Company",
-    caseStatus: "Not Started",
-    registration: "UK",
-    riskLevel: "Not Applicable",
-    lastUpdate: "5 Feb , 2025",
-    dueDate: "22 Oct , 2025"
-  },
-  {
-    id: 4,
-    name: "ABC Corp Ltd.",
-    type: "Company",
-    caseStatus: "Not Started",
-    registration: "UK",
-    riskLevel: "Not Applicable",
-    lastUpdate: "5 Jan , 2025",
-    dueDate: "20 Jul , 2025"
-  }
-]);
+// Define the customer/entity type
+interface Entity {
+  id: string;
+  name: string;
+  type: string;
+  caseStatus: string;
+  registration: string;
+  riskLevel: string;
+  riskScore?: number;
+  lastUpdate: string;
+  dueDate: string;
+}
+
+// Data for customers/entities
+const customers = ref<Entity[]>([]);
 
 // Active customer for dropdown
-const activeCustomer = ref(null);
+const activeCustomer = ref<string | null>(null);
 const isActionOpen = ref(false);
 
 const search = ref('');
+
+// Loading state
+const isLoading = ref(true);
+const error = ref<string | null>(null);
+
+// Add entity modal state
+const isAddEntityModalOpen = ref(false);
+
+// Fetch entities from the API
+const fetchEntities = async () => {
+  isLoading.value = true;
+  error.value = null;
+  
+  try {
+    const response = await fetch('/api/entities');
+    
+    const data = await response.json();
+    
+    if (!response.ok) {
+      // Check for authentication errors
+      if (response.status === 401) {
+        throw new Error(data.body?.message || 'Please log in to view entities');
+      } else if (response.status === 400 && data.body?.error?.includes('team')) {
+        throw new Error(data.body?.message || 'You need to be part of a team to view entities');
+      } else {
+        throw new Error(data.body?.message || 'Failed to fetch entities');
+      }
+    }
+    
+    if (data.success) {
+      customers.value = data.data;
+    } else {
+      throw new Error(data.body?.message || data.body?.error || 'Failed to fetch entities');
+    }
+  } catch (err) {
+    console.error('Error fetching entities:', err);
+    error.value = err.message || 'Failed to fetch entities';
+    // Keep a few mock entities for UI display in case of error
+    customers.value = [
+      {
+        id: '1',
+        name: "Example Company",
+        type: "Company",
+        caseStatus: "Not Started",
+        registration: "Demo",
+        riskLevel: "Not Applicable",
+        lastUpdate: "14 Feb, 2025",
+        dueDate: "30 Sep, 2025"
+      }
+    ];
+  } finally {
+    isLoading.value = false;
+  }
+};
 
 // Toggle action menu
 const toggleActions = (customer) => {
@@ -66,24 +91,42 @@ const toggleActions = (customer) => {
   }
 };
 
+// Handle entity added and refresh the list
+const handleEntityAdded = () => {
+  fetchEntities();
+  isAddEntityModalOpen.value = false;
+};
+
+// Load entities when component is mounted
+onMounted(() => {
+  fetchEntities();
+});
+
 // Mock function to handle actions
 const handleAction = (action, customer) => {
   console.log(`${action} for ${customer.name}`);
   isActionOpen.value = false;
+  
+  if (action === 'delete') {
+    // Show confirmation dialog or directly delete
+    if (confirm(`Are you sure you want to delete ${customer.name}?`)) {
+      // In a real implementation, we would call an API to delete the entity
+      fetchEntities(); // Refresh the list after deletion
+    }
+  }
 };
-
-// Loading state
-const isLoading = ref(true);
-
-// Simulate loading
-setTimeout(() => {
-  isLoading.value = false;
-}, 1500);
 </script>
 
 <template>
   <div class="container max-w-6xl py-8">
-    <h1 class="text-3xl font-semibold mb-8">All Entities</h1>
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="text-3xl font-semibold">All Entities</h1>
+      
+      <!-- Add Entity Button -->
+      <Button @click="isAddEntityModalOpen = true" class="bg-primary text-white">
+        Add Entity
+      </Button>
+    </div>
 
     <div class="flex flex-col md:flex-row gap-4 mb-8">
       <div class="flex-1 relative">
@@ -120,6 +163,21 @@ setTimeout(() => {
     </div>
 
     <SaasLoadingSpinner v-if="isLoading" />
+    
+    <div v-else-if="error" class="bg-red-100 dark:bg-red-900 p-4 rounded-md mb-4">
+      <p class="text-red-700 dark:text-red-300">{{ error }}</p>
+      <Button @click="fetchEntities" class="mt-2">Try Again</Button>
+    </div>
+    
+    <div v-else-if="customers.length === 0" class="text-center py-12">
+      <div class="mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        </svg>
+      </div>
+      <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No entities found</h3>
+      <p class="text-gray-500 dark:text-gray-400 mb-4">Adjust your filters or add an entity.</p>
+    </div>
     
     <div v-else class="overflow-x-auto rounded-lg border dark:border-gray-700">
       <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -249,11 +307,11 @@ setTimeout(() => {
         </tbody>
       </table>
     </div>
-    
-    <!-- Pagination -->
-    <div class="flex justify-end mt-4 space-x-2">
-      <button class="px-3 py-1 bg-gray-200 dark:bg-gray-700 text-black dark:text-white rounded-md">1</button>
-      <button class="px-3 py-1 bg-white dark:bg-gray-800 text-black dark:text-white border border-gray-300 dark:border-gray-600 rounded-md">2</button>
-    </div>
   </div>
+  
+  <!-- Add Entity Modal -->
+  <AddEntityModal 
+    v-model:open="isAddEntityModalOpen" 
+    @entity-added="handleEntityAdded" 
+  />
 </template>

@@ -27,7 +27,7 @@ export const useUser = ({ initialUser }: { initialUser?: User } = {}) => {
   });
 
   const currentTeamMemberships = computed(() =>
-    teamMemberships.value.find((membership) => {
+    teamMemberships.value.find((membership: any) => {
       return membership.team.id === currentTeamId.value;
     }),
   );
@@ -80,7 +80,7 @@ export const useUser = ({ initialUser }: { initialUser?: User } = {}) => {
         user.value = null;
         loaded.value = false;
 
-        navigateTo(localePath("/"));
+        navigateTo(localePath("/auth/login"));
       } else {
         user.value = data.user;
         loaded.value = true;
@@ -102,7 +102,7 @@ export const useUser = ({ initialUser }: { initialUser?: User } = {}) => {
       user: null,
     });
 
-    navigateTo(localePath("/"));
+    navigateTo(localePath("/auth/login"));
   };
 
   return {

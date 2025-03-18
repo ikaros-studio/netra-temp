@@ -81,9 +81,11 @@
       <DropdownMenuSeparator />
 
       <DropdownMenuItem asChild>
-        <NuxtLinkLocale to="/app/settings/account/general">
-          <SettingsIcon class="mr-2 size-4" />
-          {{ $t("dashboard.userMenu.accountSettings") }}
+        <NuxtLinkLocale to="/app/settings/account/general" :custom="true">
+          <span class="flex items-center">
+            <SettingsIcon class="mr-2 size-4" />
+            {{ $t("dashboard.userMenu.accountSettings") }}
+          </span>
         </NuxtLinkLocale>
       </DropdownMenuItem>
 
