@@ -208,4 +208,9 @@ export default defineNuxtConfig({
       ErrorMessage: "ErrorMessage",
     },
   },
+
+  // Add Nitro configuration for proper Vercel deployment
+  nitro: {
+    preset: 'vercel',
+  },
 });
