@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { UndoIcon } from "lucide-vue-next";
   
-  defineProps({
+  const props = defineProps({
     error: Object
   });
 
@@ -12,13 +12,20 @@
 
 <template>
   <div class="flex h-screen flex-col items-center justify-center">
-    <h1 class="text-5xl font-bold">404</h1>
-    <p class="mt-2 text-2xl">Page not found</p>
+    <h1 class="text-5xl font-bold">{{ error?.statusCode || '404' }}</h1>
+    <p class="mt-2 text-xl">{{ error?.statusMessage || 'Page not found' }}</p>
+    <p v-if="error?.message" class="mt-1 text-sm text-muted-foreground">{{ error.message }}</p>
 
-    <Button asChild class="mt-4" @click="handleError">
+    <div class="mt-6 flex gap-4">
+      <Button variant="outline" @click="handleError">
+        <UndoIcon class="mr-2 size-4" /> Try again
+      </Button>
+
       <NuxtLink to="/">
-        <UndoIcon class="mr-2 size-4" /> Go to homepage
+        <Button>
+          Go to homepage
+        </Button>
       </NuxtLink>
-    </Button>
+    </div>
   </div>
 </template>

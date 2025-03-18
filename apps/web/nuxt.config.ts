@@ -208,4 +208,14 @@ export default defineNuxtConfig({
       ErrorMessage: "ErrorMessage",
     },
   },
+
+  // Add Nitro configuration for Vercel deployment
+  nitro: {
+    preset: 'vercel',
+    // Configure client-side routing fallback
+    routeRules: {
+      // Handle client-side routing
+      '/**': { ssr: true }
+    }
+  },
 });
