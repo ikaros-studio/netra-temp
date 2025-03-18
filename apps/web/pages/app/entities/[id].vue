@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { EntityDetail, ComplianceGraph, RiskScore, ComplianceCertificate } from '~/modules/saas/entities/components';
 import { Card, CardHeader, CardTitle, CardContent } from '~/modules/ui/components/card';
+import { useApiCaller } from '~/modules/shared/composables/useApiCaller';
 
 // Define the page layout
 definePageMeta({
@@ -11,13 +12,15 @@ definePageMeta({
 
 // Get the entity ID from the route
 const route = useRoute();
-const entityId = computed(() => route.params.id);
+const entityId = computed(() => route.params.id as string);
 
-// Mock entity data
-// In a real application, this would be fetched from an API based on the ID
+// API caller for data fetching
+const { apiCaller } = useApiCaller();
+
+// Entity data
 const entity = ref({
   id: entityId,
-  name: "Otto Company",
+  name: "",
   type: "Company",
   caseStatus: "Not Started",
   registration: "Germany",
@@ -68,10 +71,35 @@ const complianceChecks = ref([
 // Loading state
 const isLoading = ref(true);
 
-// Simulate loading
-setTimeout(() => {
-  isLoading.value = false;
-}, 1000);
+// Fetch entity data from the database
+const fetchEntityData = async () => {
+  try {
+    const response = await fetch(`/api/entities/${entityId.value}`);
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch entity data');
+    }
+    
+    const data = await response.json();
+    
+    if (data.success && data.data) {
+      entity.value = {
+        ...entity.value,
+        name: data.data.name,
+        type: data.data.type,
+        lastUpdate: data.data.lastUpdate,
+        // You can map other properties as needed
+      };
+    }
+  } catch (error) {
+    console.error("Error fetching entity data:", error);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+// Fetch data when component is mounted
+onMounted(fetchEntityData);
 </script>
 
 <template>

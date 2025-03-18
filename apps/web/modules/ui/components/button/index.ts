@@ -11,7 +11,7 @@ export const buttonVariants = cva(
         error:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
-          "border border-secondary/15 bg-transparent text-secondary hover:bg-secondary/10",
+          "border border-secondary/15 bg-transparent text-foreground hover:bg-secondary/10",
         secondary:
           "border-secondary bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost:
