@@ -9,7 +9,15 @@
     validateOnModelUpdate: false,
   });
 
-  const useIdFunction = () => useId();
+  // Modified to handle SSR safely
+  const useIdFunction = () => {
+    // Check if we're in a client-side environment
+    if (process.client) {
+      return useId();
+    }
+    // Return a dummy implementation for SSR
+    return () => `id-${Math.random().toString(36).substring(2, 9)}`;
+  };
 
   const titleTemplateDefault = "Netra PFA Cloud";
   const titleDivider = "|";

@@ -14,7 +14,11 @@
     class?: HTMLAttributes["class"];
   }>();
 
-  const id = useId();
+  // Generate a safe ID that works in both client and server
+  const id = process.client 
+    ? useId() 
+    : `form-item-${Math.random().toString(36).substring(2, 9)}`;
+    
   provide(FORM_ITEM_INJECTION_KEY, id);
 </script>
 
