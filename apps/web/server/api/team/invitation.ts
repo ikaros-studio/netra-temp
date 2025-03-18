@@ -28,7 +28,7 @@ export default defineEventHandler(async (event) => {
     const user = await apiCaller.auth.user();
     if (!user) {
       return createResponse(
-        `/auth/login?invitationCode=${invitation.id}&email=${invitation.email}`,
+        `/auth/signup?invitationCode=${invitation.id}&email=${invitation.email}`,
       );
     }
 

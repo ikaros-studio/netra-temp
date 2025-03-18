@@ -101,13 +101,13 @@
 
     <SaasTeamInvitationInfo v-if="invitationCode" class="mb-6" />
 
-    <div class="grid grid-cols-1 items-stretch gap-4 md:grid-cols-2">
+    <!-- <div class="grid grid-cols-1 items-stretch gap-4 md:grid-cols-2">
       <SaasSocialSigninButton
         v-for="providerId of Object.keys(oAuthProviders)"
         :key="providerId"
         :provider="providerId"
       />
-    </div>
+    </div> -->
 
     <hr class="my-8" />
 
