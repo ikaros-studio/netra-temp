@@ -160,6 +160,40 @@ export default defineNuxtConfig({
   // @vue-email/nuxt
   vueEmail: {
     baseUrl,
+    tailwind: {
+      // Use a simplified theme configuration that can be properly serialized
+      theme: {
+        extend: {
+          colors: {
+            border: "hsl(var(--border))",
+            input: "hsl(var(--input))",
+            ring: "hsl(var(--ring))",
+            background: "hsl(var(--background))",
+            foreground: "hsl(var(--foreground))",
+            primary: {
+              DEFAULT: "hsl(var(--primary))",
+              foreground: "hsl(var(--primary-foreground))",
+            },
+            secondary: {
+              DEFAULT: "hsl(var(--secondary))",
+              foreground: "hsl(var(--secondary-foreground))",
+            },
+            destructive: {
+              DEFAULT: "hsl(var(--destructive))",
+              foreground: "hsl(var(--destructive-foreground))",
+            },
+            success: {
+              DEFAULT: "hsl(var(--success))",
+              foreground: "hsl(var(--success-foreground))",
+            },
+            highlight: {
+              DEFAULT: "hsl(var(--highlight))",
+              foreground: "hsl(var(--highlight-foreground))",
+            },
+          }
+        }
+      }
+    }
   },
 
   // @vee-validate/nuxt

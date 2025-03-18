@@ -5,11 +5,10 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  # Add your environment variables here
+  # Environment variables from your actual files
   NUXT_SESSION_PASSWORD: '$(NUXT_SESSION_PASSWORD)'
-  STRAPI_URL: '$(STRAPI_URL)'
-  STRAPI_API_TOKEN: '$(STRAPI_API_TOKEN)'
-  # Add any other environment variables your app needs
+  DATABASE_URL: '$(DATABASE_URL)'
+  RESEND_API_KEY: '$(RESEND_API_KEY)'
 
 steps:
 - task: NodeTool@0
@@ -24,9 +23,8 @@ steps:
   displayName: 'Build application'
   env:
     NUXT_SESSION_PASSWORD: $(NUXT_SESSION_PASSWORD)
-    STRAPI_URL: $(STRAPI_URL)
-    STRAPI_API_TOKEN: $(STRAPI_API_TOKEN)
-    # Add any other environment variables here too
+    DATABASE_URL: $(DATABASE_URL)
+    RESEND_API_KEY: $(RESEND_API_KEY)
 
 - task: CopyFiles@2
   inputs:
