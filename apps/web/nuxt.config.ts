@@ -212,5 +212,8 @@ export default defineNuxtConfig({
   // Add Nitro configuration for proper Vercel deployment
   nitro: {
     preset: 'vercel',
+    routeRules: {
+      '/**': { isr: true }
+    }
   },
 });
